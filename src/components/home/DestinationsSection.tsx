@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Star, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BookingModal } from "./BookingModal";
 
 const destinations = [
   {
@@ -54,6 +56,16 @@ const destinations = [
 ];
 
 export function DestinationsSection() {
+  const [selectedDestination, setSelectedDestination] = useState<typeof destinations[0] | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleBookNow = (e: React.MouseEvent, destination: typeof destinations[0]) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectedDestination(destination);
+    setIsModalOpen(true);
+  };
+
   return (
     <section className="py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -76,9 +88,8 @@ export function DestinationsSection() {
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {destinations.map((destination, index) => (
-            <Link
+            <div
               key={destination.id}
-              to={`/destinations/${destination.id}`}
               className={`group relative overflow-hidden rounded-2xl shadow-travel-md hover-lift animate-fade-up stagger-${index + 1}`}
             >
               {/* Image */}
@@ -113,14 +124,31 @@ export function DestinationsSection() {
                     <span className="text-sm opacity-70"> / person</span>
                   </p>
                 </div>
+
+                {/* Book Now Button - appears on hover */}
+                <Button
+                  variant="hero"
+                  size="sm"
+                  className="mt-4 w-full opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
+                  onClick={(e) => handleBookNow(e, destination)}
+                >
+                  Book Now
+                </Button>
               </div>
 
               {/* Hover Effect */}
-              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </Link>
+              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            </div>
           ))}
         </div>
       </div>
+
+      {/* Booking Modal */}
+      <BookingModal
+        destination={selectedDestination}
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+      />
     </section>
   );
 }

@@ -1,12 +1,18 @@
 import { Search, MapPin, Calendar, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useParallax } from "@/hooks/useParallax";
 import heroImage from "@/assets/hero-beach.jpg";
 
 export function HeroSection() {
+  const parallaxOffset = useParallax(0.4);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
+      {/* Parallax Background Image */}
+      <div 
+        className="absolute inset-0 will-change-transform"
+        style={{ transform: `translateY(${parallaxOffset}px) scale(1.1)` }}
+      >
         <img
           src={heroImage}
           alt="Tropical beach paradise"
@@ -15,8 +21,21 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-hero" />
       </div>
 
+      {/* Floating Elements - Parallax layers */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{ transform: `translateY(${parallaxOffset * 0.2}px)` }}
+      >
+        <div className="absolute top-1/4 left-10 w-24 h-24 bg-accent/20 rounded-full blur-3xl animate-float" />
+        <div className="absolute top-1/3 right-20 w-32 h-32 bg-primary/20 rounded-full blur-3xl animate-float stagger-2" />
+        <div className="absolute bottom-1/3 left-1/4 w-20 h-20 bg-ocean-light/30 rounded-full blur-2xl animate-float stagger-3" />
+      </div>
+
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 pt-20">
+      <div 
+        className="relative z-10 container mx-auto px-4 pt-20"
+        style={{ transform: `translateY(${parallaxOffset * 0.1}px)` }}
+      >
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 animate-fade-up">
             Discover Your Next
