@@ -129,15 +129,12 @@ export function DestinationsSection() {
                 <Button
                   variant="hero"
                   size="sm"
-                  className="mt-4 w-full opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
+                  className="mt-4 w-full opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 relative z-10"
                   onClick={(e) => handleBookNow(e, destination)}
                 >
                   Book Now
                 </Button>
               </div>
-
-              {/* Hover Effect */}
-              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             </div>
           ))}
         </div>
