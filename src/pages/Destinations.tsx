@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { Star, MapPin, Filter, X } from "lucide-react";
+import { Star, MapPin, Filter, X, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { BookingModal } from "@/components/home/BookingModal";
 
 const allDestinations = [
   { id: 1, name: "Santorini, Greece", continent: "Europe", season: "Summer", price: 1299, rating: 4.9, reviews: 324, image: "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=800&q=80", duration: "7 days" },
@@ -25,22 +28,39 @@ const priceRanges = ["All", "Under $1000", "$1000-$1500", "$1500+"];
 const seasons = ["All", "Spring", "Summer", "Winter", "All Year"];
 
 const Destinations = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
   const [selectedContinent, setSelectedContinent] = useState("All");
   const [selectedPrice, setSelectedPrice] = useState("All");
   const [selectedSeason, setSelectedSeason] = useState("All");
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedDestination, setSelectedDestination] = useState<typeof allDestinations[0] | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const search = searchParams.get("search");
+    if (search) setSearchQuery(search);
+  }, [searchParams]);
+
+  const handleBookNow = (destination: typeof allDestinations[0]) => {
+    setSelectedDestination(destination);
+    setIsModalOpen(true);
+  };
 
   const filteredDestinations = allDestinations.filter((dest) => {
+    const searchMatch = !searchQuery || 
+      dest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      dest.continent.toLowerCase().includes(searchQuery.toLowerCase());
     const continentMatch = selectedContinent === "All" || dest.continent === selectedContinent;
     const seasonMatch = selectedSeason === "All" || dest.season === selectedSeason;
     let priceMatch = true;
     if (selectedPrice === "Under $1000") priceMatch = dest.price < 1000;
     else if (selectedPrice === "$1000-$1500") priceMatch = dest.price >= 1000 && dest.price <= 1500;
     else if (selectedPrice === "$1500+") priceMatch = dest.price > 1500;
-    return continentMatch && seasonMatch && priceMatch;
+    return searchMatch && continentMatch && seasonMatch && priceMatch;
   });
 
-  const activeFilters = [selectedContinent, selectedPrice, selectedSeason].filter(f => f !== "All").length;
+  const activeFilters = [selectedContinent, selectedPrice, selectedSeason].filter(f => f !== "All").length + (searchQuery ? 1 : 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -61,12 +81,22 @@ const Destinations = () => {
       {/* Filters */}
       <section className="sticky top-20 z-40 bg-card/95 backdrop-blur-md border-b border-border py-4">
         <div className="container mx-auto px-4">
-          {/* Mobile Filter Toggle */}
-          <div className="md:hidden flex items-center justify-between mb-4">
+          {/* Search Input */}
+          <div className="flex items-center gap-4 mb-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search destinations..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className="gap-2"
+              className="gap-2 md:hidden"
             >
               <Filter className="h-4 w-4" />
               Filters
@@ -76,9 +106,6 @@ const Destinations = () => {
                 </span>
               )}
             </Button>
-            <p className="text-muted-foreground text-sm">
-              {filteredDestinations.length} destinations
-            </p>
           </div>
 
           {/* Filter Controls */}
@@ -184,6 +211,15 @@ const Destinations = () => {
                   <X className="h-3 w-3" />
                 </button>
               )}
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-sm"
+                >
+                  "{searchQuery}"
+                  <X className="h-3 w-3" />
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -230,7 +266,7 @@ const Destinations = () => {
                       <span className="text-accent font-bold text-xl">${destination.price}</span>
                       <span className="text-muted-foreground text-sm"> / person</span>
                     </div>
-                    <Button variant="default" size="sm">
+                    <Button variant="default" size="sm" onClick={() => handleBookNow(destination)}>
                       Book Now
                     </Button>
                   </div>
@@ -249,6 +285,7 @@ const Destinations = () => {
                   setSelectedContinent("All");
                   setSelectedPrice("All");
                   setSelectedSeason("All");
+                  setSearchQuery("");
                 }}
               >
                 Clear all filters
@@ -257,6 +294,12 @@ const Destinations = () => {
           )}
         </div>
       </section>
+
+      <BookingModal
+        destination={selectedDestination}
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+      />
 
       <Footer />
     </div>

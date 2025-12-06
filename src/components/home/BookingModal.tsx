@@ -101,7 +101,7 @@ export function BookingModal({ destination, open, onOpenChange }: BookingModalPr
                     {startDate ? format(startDate, "MMM dd, yyyy") : "Select date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
                   <CalendarComponent
                     mode="single"
                     selected={startDate}
@@ -128,7 +128,7 @@ export function BookingModal({ destination, open, onOpenChange }: BookingModalPr
                     {endDate ? format(endDate, "MMM dd, yyyy") : "Select date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
                   <CalendarComponent
                     mode="single"
                     selected={endDate}
