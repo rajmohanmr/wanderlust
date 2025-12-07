@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { Star, MapPin, Filter, X, Search } from "lucide-react";
+import { Star, MapPin, Filter, X, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { BookingModal } from "@/components/home/BookingModal";
@@ -33,7 +33,7 @@ const Destinations = () => {
   const [selectedContinent, setSelectedContinent] = useState("All");
   const [selectedPrice, setSelectedPrice] = useState("All");
   const [selectedSeason, setSelectedSeason] = useState("All");
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
   const [selectedDestination, setSelectedDestination] = useState<typeof allDestinations[0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -96,22 +96,23 @@ const Destinations = () => {
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className="gap-2 md:hidden"
+              className="gap-2"
             >
               <Filter className="h-4 w-4" />
-              Filters
+              <span className="hidden sm:inline">Filters</span>
               {activeFilters > 0 && (
                 <span className="bg-accent text-accent-foreground text-xs px-2 py-0.5 rounded-full">
                   {activeFilters}
                 </span>
               )}
+              {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
           </div>
 
           {/* Filter Controls */}
           <div className={cn(
             "grid gap-4 md:grid-cols-4 transition-all duration-300",
-            showFilters ? "grid-rows-[1fr] opacity-100" : "md:grid-rows-[1fr] md:opacity-100 grid-rows-[0fr] opacity-0 overflow-hidden"
+            showFilters ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0 overflow-hidden h-0"
           )}>
             <div className="min-h-0 md:min-h-auto">
               <label className="text-sm font-medium text-muted-foreground mb-2 block">Continent</label>

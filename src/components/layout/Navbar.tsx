@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Plane } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,13 @@ const navLinks = [
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isHome = location.pathname === "/";
+
+  const handleBookNow = () => {
+    navigate("/destinations");
+  };
+
 
   return (
     <nav
@@ -71,7 +77,7 @@ export function Navbar() {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Button variant={isHome ? "hero" : "default"} size="lg">
+            <Button variant={isHome ? "hero" : "default"} size="lg" onClick={handleBookNow}>
               Book Now
             </Button>
           </div>
@@ -114,7 +120,7 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Button variant="hero" className="w-full" size="lg">
+          <Button variant="hero" className="w-full" size="lg" onClick={() => { setIsOpen(false); handleBookNow(); }}>
             Book Now
           </Button>
         </div>
